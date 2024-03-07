@@ -8,6 +8,7 @@
 	<artifactId>TestTask</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+<!--	измени версию джавы на 11-->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>21</maven.compiler.target>

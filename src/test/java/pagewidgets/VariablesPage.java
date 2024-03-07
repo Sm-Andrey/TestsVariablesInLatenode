@@ -36,6 +36,7 @@ public class VariablesPage {
     return $(byXpath(format("//div[@title='%s']", newNameType)));
   }
 
+  //fixme этот метод кажется лишним
   public SelenideElement selectNewType(String type) {
     return $(byXpath(format("//input[@id='type']/parent::span/following-sibling::span[@title='%s']", type)));
   }
@@ -90,6 +91,7 @@ public class VariablesPage {
   @Step("Создаем переменную с типом {type} именем {name} и значением {value}")
   public void createVariable(String type, String name, String value) {
     btnNewVariable.click();
+    //fixme нижние две строки кажется можно вынести в один метод
     selectTypeOfVariable.click();
     selectType(type).click();
     inputKey.clear();
