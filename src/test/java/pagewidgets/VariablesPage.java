@@ -5,11 +5,11 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 
-import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Selectors.*;
+import static com.codeborne.selenide.Condition.enabled;
+import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.capitalize;
+import static pagewidgets.APIMethod.*;
 
 public class VariablesPage {
   public final ElementsCollection listVariable = $$x("//div[contains(@class, 'tableBody')]/div");
@@ -18,6 +18,7 @@ public class VariablesPage {
   public final SelenideElement msgErrorRequiredField = $x("//span[text()='Required field']");
   public final SelenideElement msgAboutNameAlreadyExists = $("[data-error-string='the-variable-name-already-exists']");
   private final SelenideElement btnClose = $("[data-uf-button='close']");
+  private final SelenideElement modal = $x("//div[contains(@class, 'uf-visible')]");
   private final SelenideElement btnNewVariable = $x("//div[text()='New variable']/parent::button");
   private final SelenideElement search = $x("//div[contains(@class, 'searchAndFilterWrapper')]//input");
   private final SelenideElement selectTypeOfVariable = $("#type");
@@ -28,12 +29,10 @@ public class VariablesPage {
   private final SelenideElement inputValue = $("#value");
   private final SelenideElement inputValueInt = $(".ant-input-number-input");
   private final SelenideElement closeWindowNewVariable = $(".ant-drawer-close");
-  private final ElementsCollection listSettingsInFieldVariable = $$x("//*[contains(@class, 'kebabWrapper')]");
 
 
-  public SelenideElement selectType(String nameType) {
-    String newNameType = nameType.equalsIgnoreCase("json") ? nameType.toUpperCase() : capitalize(nameType);
-    return $(byXpath(format("//div[@title='%s']", newNameType)));
+  public SelenideElement  typeVariable(String nameType) {
+    return $(byXpath(format("//div[@title='%s']", nameType)));
   }
 
   public SelenideElement selectNewType(String type) {
@@ -58,11 +57,6 @@ public class VariablesPage {
             "(@class, 'serviceCellInformationWrapper')]/following::div[contains(@class, 'serviceCellInformationWrapper')]", nameVariable)));
   }
 
-  public SelenideElement fieldCreateDate(String nameVariable) {
-    return $(byXpath(format("//span[@title='%s']/parent::div[contains(@class, 'nameCellWrapper')]/following::div[contains" +
-            "(@class, 'dateWrapper')]", nameVariable)));
-  }
-
   public SelenideElement settingsInFieldVariable(String nameVariable) {
     return $(byXpath(format("//span[@title='%s']/parent::div[contains(@class, 'nameCellWrapper')]/following::*[contains" +
             "(@class, 'kebabWrapper')]", nameVariable)));
@@ -73,25 +67,29 @@ public class VariablesPage {
     closeWindowNewVariable.click();
   }
 
-  @Step("Получаем количество созданных переменных")
-  public int sizeCreatedVariables() {
-    return listVariable.size();
-  }
-
   @Step("Открываем окно создания новой переменной и вводим имя переменной")
   public void openNewVariableAndEnterNameVariable(String type, String name) {
     btnNewVariable.click();
     selectTypeOfVariable.click();
-    selectType(type).click();
+    typeVariable(type).click();
     inputKey.clear();
     inputKey.should(enabled).setValue(name).pressTab();
+  }
+
+  private void selectType(String type) {
+    selectTypeOfVariable.click();
+    typeVariable(type).click();
+  }
+
+  private void changeType(String oldType, String type) {
+    selectNewType(oldType).click();
+    typeVariable(type).click();
   }
 
   @Step("Создаем переменную с типом {type} именем {name} и значением {value}")
   public void createVariable(String type, String name, String value) {
     btnNewVariable.click();
-    selectTypeOfVariable.click();
-    selectType(type).click();
+    selectType(type);
     inputKey.clear();
     inputKey.should(enabled).setValue(name);
     if ( type.equalsIgnoreCase("bool") ) {
@@ -112,6 +110,7 @@ public class VariablesPage {
 
   @Step("Удаляем переменную с именем {nameVariable}")
   public void deleteVariable(String nameVariable) {
+//    Selenide.executeJavaScript("arguments[0].click();", nameVariable);
     settingsInFieldVariable(nameVariable).click();
     btnDelete.click();
     btnDeleteInAlert.click();
@@ -121,8 +120,7 @@ public class VariablesPage {
   public void editVariable(String nameVariable, String oldType, String type, String newName, String value) {
     settingsInFieldVariable(nameVariable).click();
     btnEdit.click();
-    selectNewType(oldType).click();
-    selectType(type).click();
+    changeType(oldType, type);
     inputKey.setValue(Keys.CONTROL + "A").sendKeys(Keys.BACK_SPACE);
     inputKey.setValue(newName);
     if ( type.equalsIgnoreCase("bool") ) {
@@ -153,19 +151,14 @@ public class VariablesPage {
 
   @Step("Закрываем окно инструкции")
   public void closeWelcomeWindow() {
-    if ( btnClose.isEnabled() ) btnClose.click();
+    if ( modal.isDisplayed() ) btnClose.click();
   }
 
   @Step("Удаляем все созданные переменные")
   public void deleteAllVariables() {
-    var i = 0;
-    int sizeList = sizeCreatedVariables();
-    while ( i <= sizeList - 1 ) {
-      listSettingsInFieldVariable.get(i).click();
-      btnDelete.click();
-      btnDeleteInAlert.click();
-      btnDeleteInAlert.shouldNot(visible);
-      sizeList = sizeCreatedVariables();
+    getListIdVariables();
+    for (String name : listIdVariables){
+      deleteListIdVariables(name);
     }
   }
 
@@ -176,5 +169,6 @@ public class VariablesPage {
   public String msgErrorAtValue() {
     return inputValue.getAttribute("validationMessage");
   }
+
 
 }

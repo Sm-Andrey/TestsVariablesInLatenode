@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id "io.qameta.allure" version "2.11.2"
+}
+
+wrapper {
+    gradleVersion = '8.5'
+}
+
+
+def allureVersion = '2.25.0'
+def aspectJVersion = '1.9.21'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.add('-parameters')
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    agent {
+        canBeResolved = true
+        canBeConsumed = true
+    }
+}
+
+dependencies {
+    agent "org.aspectj:aspectjweaver:$aspectJVersion"
+
+    // https://mvnrepository.com/artifact/com.codeborne/selenide
+    implementation "com.codeborne:selenide:6.19.1"
+
+    testImplementation platform("io.qameta.allure:allure-bom:$allureVersion")
+    testImplementation "io.qameta.allure:allure-junit5"
+    testImplementation 'io.qameta.allure:allure-selenide'
+    testImplementation 'io.qameta.allure:allure-rest-assured'
+
+    testImplementation platform("org.junit:junit-bom:5.10.2")
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation "org.junit.jupiter:junit-jupiter-params"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+    implementation "org.slf4j:slf4j-simple:2.0.11"
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.15.1'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation 'org.assertj:assertj-core:3.25.3'
+
+    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
+
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation 'org.json:json:20240303'
+
+}
+
+test {
+    ignoreFailures = true
+    useJUnitPlatform()
+    jvmArgs = [ "-javaagent:${configurations.agent.singleFile}" ]
+}

@@ -2,7 +2,10 @@ package tests;
 
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import pagewidgets.VariablesPage;
@@ -12,14 +15,24 @@ import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.open;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Feature("Тестирование складки Variables")
 public class VariablesTest extends TestBase {
   VariablesPage variablePage = new VariablesPage();
 
-  @Order(1)
+  @BeforeEach
+  public void setUp() {
+    open("/variables");
+    variablePage.closeWelcomeWindow();
+  }
+
+  @AfterEach
+  public  void tearDown() {
+    new VariablesPage().deleteAllVariables();
+  }
+
   @DisplayName("Позитивная проверка создания переменной.")
   @ParameterizedTest
   @MethodSource("auxiliaryClasses.Data#positiveTestData")
@@ -31,7 +44,6 @@ public class VariablesTest extends TestBase {
     variablePage.fieldTypeOfVariable(name).shouldHave(text(extendsType));
   }
 
-  @Order(2)
   @DisplayName("Негативная проверка создания переменной.")
   @ParameterizedTest
   @MethodSource("auxiliaryClasses.Data#negativeTestDataWithSpaces")
@@ -43,7 +55,6 @@ public class VariablesTest extends TestBase {
     variablePage.closeWindowCreateNewVariable();
   }
 
-  @Order(3)
   @DisplayName("Проверка создания переменной с пустым полем имени.")
   @Test
   @Story("Проверка создания переменной с пустым полем имени.")
@@ -53,7 +64,6 @@ public class VariablesTest extends TestBase {
     variablePage.closeWindowCreateNewVariable();
   }
 
-  @Order(4)
   @DisplayName("Проверка создания переменной с пустым полем значения переменной.")
   @Test
   @Story("Проверка создания переменной с пустым полем значения переменной.")
@@ -63,7 +73,6 @@ public class VariablesTest extends TestBase {
     variablePage.closeWindowCreateNewVariable();
   }
 
-  @Order(5)
   @DisplayName("Проверка создания переменной Bool с пустым полем значения переменной.")
   @Test
   @Story("Проверка создания переменной Bool с пустым полем значения переменной.")
@@ -75,46 +84,47 @@ public class VariablesTest extends TestBase {
     variablePage.closeWindowCreateNewVariable();
   }
 
-  @Order(6)
   @DisplayName("Проверка редактирования переменной.")
   @Test
   @Story("Проверка редактирования переменной.")
   public void testEditVariable() {
-    variablePage.editVariable("str", "String", "JSON", "editSTR", "\"Тестовая переменная String v2\"");
+    variablePage.createVariable("String", "strEdit", "Тестовая переменная String для редактирования");
+    variablePage.editVariable("strEdit", "String", "JSON", "editSTR", "\"Тестовая переменная String отредактированная\"");
     variablePage.fieldName("editSTR").shouldHave(text("editSTR"));
-    variablePage.fieldValue("editSTR").shouldHave(text("Тестовая переменная String v2"));
+    variablePage.fieldValue("editSTR").shouldHave(text("Тестовая переменная String отредактированная"));
     variablePage.fieldTypeOfVariable("editSTR").shouldHave(text("json"));
   }
 
-  @Order(7)
   @DisplayName("Проверка поиска переменной через поисковую строку")
   @Test
   @Story("Проверка поиска переменной через поисковую строку")
   public void testSearchVariable() {
-    variablePage.enterTextInSearchField("editSTR");
+    variablePage.createVariable("String", "strSearch", "Тестовая переменная String для поиска");
+    variablePage.createVariable("String", "var_v2", "Тестовая переменная String для поиска");
+    variablePage.enterTextInSearchField("strSearch");
     variablePage.listVariable.should(size(1));
     variablePage.clearTextInSearchField();
     variablePage.listVariable.should(sizeGreaterThan(1));
   }
 
-  @Order(8)
   @DisplayName("Проверка не возможности создания дублика существующей переменной.")
   @Test
   @Story("Проверка не возможности создания дублика существующей переменной.")
   public void creatingDuplicateOfVariable() {
-    variablePage.createVariable("JSON", "editSTR", "Тестовая переменная String v2");
+    variablePage.createVariable("String", "strDouble", "Тестовая переменная String для создания дубликата");
+    variablePage.createVariable("String", "strDouble", "Тестовая переменная String для создания дубликата");
     variablePage.msgAboutNameAlreadyExists.should(visible);
     variablePage.msgAboutNameAlreadyExists.shouldHave(text(NAMEALREADYEXISTS));
     variablePage.closeWindowCreateNewVariable();
   }
 
-  @Order(9)
   @DisplayName("Проверка удаления переменной.")
   @Test
   @Story("Проверка удаления переменной.")
   public void positiveTestCreateVariable() {
-    variablePage.deleteVariable("editSTR");
-    variablePage.fieldName("editSTR").shouldNot(visible);
+    variablePage.createVariable("String", "strDelete", "Тестовая переменная String для удаления");
+    variablePage.deleteVariable("strDelete");
+    variablePage.fieldName("strDelete").shouldNot(visible);
   }
 
 }
