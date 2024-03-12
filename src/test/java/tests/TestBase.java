@@ -17,7 +17,6 @@ public class TestBase {
   @BeforeAll
   public static void setUpAll() {
     Configuration.pageLoadTimeout = 60000;
-//    Configuration.pageLoadStrategy = "none";
     Configuration.baseUrl = "https://app.latenode.com";
     SelenideLogger.addListener("allure", new AllureSelenide());
     new APIMethod().postAuth();

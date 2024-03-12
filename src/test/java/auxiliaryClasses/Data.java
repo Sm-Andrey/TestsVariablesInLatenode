@@ -9,10 +9,13 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Data {
   public static final String EMAIL = "prokhojy@yandex.ru";
+  public static final String NONEXISTENTEMAIL = "prokhojy@test.ru";
   public static final String PASSWORD = "qwerty123";
   public static final String FILLTHISFIELD = "Заполните это поле.";
   public static final String REQUIREDFIELD = "Required field";
   public static final String NAMEALREADYEXISTS = "The variable name already exists";
+  public static final String VERIFYYOUREMAIL = "Verify your email";
+  public static final String msgErrorNonExistentEmail = "Sorry, an error has occurred. Please try again later or contact tech. support.";
   public static final String URLAUTH = "https://api.latenode.com/users/v1/user/emailAuth";
   public static final String URLGETLISTVARIABLES = "https://api.latenode.com/latenode/v1/global/variables/my";
   public static final String URLDELETEVARIABLE = "https://api.latenode.com/latenode/v1/global/variable/delete";
