@@ -22,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class VariablesTest extends TestBase {
   VariablesPage variablePage = new VariablesPage();
 
+  //todo вынеси setup и teardown в extensions, не нагружай класс кодом
+
   @BeforeEach
   public void setUp() {
     open("/variables");
@@ -30,6 +32,7 @@ public class VariablesTest extends TestBase {
 
   @AfterEach
   public  void tearDown() {
+    //fixme зачем создавать новый объект?
     new VariablesPage().deleteAllVariables();
   }
 
@@ -126,5 +129,7 @@ public class VariablesTest extends TestBase {
     variablePage.deleteVariable("strDelete");
     variablePage.fieldName("strDelete").shouldNot(visible);
   }
+
+  //todo добавь тест на проверку сортировки по имени, по дате. Нужно проверить шестеренку даты создания
 
 }

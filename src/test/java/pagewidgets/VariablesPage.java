@@ -154,6 +154,7 @@ public class VariablesPage {
     if ( modal.isDisplayed() ) btnClose.click();
   }
 
+  //fixme этому методу здесь не место
   @Step("Удаляем все созданные переменные")
   public void deleteAllVariables() {
     getListIdVariables();

@@ -41,6 +41,7 @@ public class Data {
             arguments("JSON", " ", " ", "The variable name cannot contain spaces"));
   }
 
+  //todo методы-помогаторы для апи вынеси в отдельный класс, в другой пакет
   public static JSONObject auth() {
     JSONObject data = new JSONObject();
     data.put("email", EMAIL);

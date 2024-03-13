@@ -15,7 +15,11 @@ import java.util.List;
 import static auxiliaryClasses.Data.*;
 import static io.restassured.RestAssured.given;
 
+//fixme этот класс должен быть singleton
+//todo ему не место в этом пакете
 public class APIMethod {
+
+    //todo в целом ок, но я писал что для работы с апи мы используем retrofit, мигрируй
 
     public static String token = "";
     public static String user_id = "";
