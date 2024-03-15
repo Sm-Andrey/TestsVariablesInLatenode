@@ -1,0 +1,36 @@
+{
+  "id": "65f2eedc54a2fc555d8683dd",
+  "folderId": "65f2eec354a2fc555d8683d8",
+  "title": "Upload test scenario",
+  "description": "",
+  "nodes": [],
+  "gateways": [],
+  "spaceId": "1342",
+  "ownerId": "1342",
+  "version": "2",
+  "tags": [],
+  "release": false,
+  "latestLocalNodeId": "0",
+  "environments": [
+    {
+      "id": "65f2eedc54a2fc555d8683de",
+      "alias": "prod",
+      "name": "Prod",
+      "actualVersion": "",
+      "isActive": false
+    },
+    {
+      "id": "65f2eedc54a2fc555d8683df",
+      "alias": "dev",
+      "name": "Dev",
+      "actualVersion": "2",
+      "isActive": false
+    }
+  ],
+  "nodulInfo": {
+    "isNodul": false,
+    "isPublic": false,
+    "isCodul": false
+  },
+  "readOnly": false
+}
