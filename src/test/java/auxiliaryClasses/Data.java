@@ -1,6 +1,5 @@
 package auxiliaryClasses;
 
-import org.json.JSONObject;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
@@ -17,8 +16,6 @@ public class Data {
   public static final String VERIFYYOUREMAIL = "Verify your email";
   public static final String msgErrorNonExistentEmail = "Sorry, an error has occurred. Please try again later or contact tech. support.";
   public static final String URLAUTH = "https://api.latenode.com/users/v1/user/emailAuth";
-  public static final String URLGETLISTVARIABLES = "https://api.latenode.com/latenode/v1/global/variables/my";
-  public static final String URLDELETEVARIABLE = "https://api.latenode.com/latenode/v1/global/variable/delete";
 
   public static Stream<Arguments> positiveTestData() {
     return Stream.of(
@@ -44,16 +41,4 @@ public class Data {
             arguments("JSON", " ", " ", "The variable name cannot contain spaces"));
   }
 
-  public static JSONObject auth() {
-    JSONObject data = new JSONObject();
-    data.put("email", EMAIL);
-    data.put("password", PASSWORD);
-    return data;
-  }
-
-  public static JSONObject idVariable(String id) {
-    JSONObject data = new JSONObject();
-    data.put("global_variable_id", id);
-    return data;
-  }
 }

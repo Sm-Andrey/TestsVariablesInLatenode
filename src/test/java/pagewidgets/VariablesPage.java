@@ -9,7 +9,6 @@ import static com.codeborne.selenide.Condition.enabled;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
 import static java.lang.String.format;
-import static pagewidgets.APIMethod.*;
 
 public class VariablesPage {
   public final ElementsCollection listVariable = $$x("//div[contains(@class, 'tableBody')]/div");
@@ -58,8 +57,8 @@ public class VariablesPage {
   }
 
   public SelenideElement settingsInFieldVariable(String nameVariable) {
-    return $(byXpath(format("//span[@title='%s']/parent::div[contains(@class, 'nameCellWrapper')]/following::*[contains" +
-            "(@class, 'kebabWrapper')]", nameVariable)));
+    return $x(format("//span[@title='%s']/parent::div[contains(@class, 'nameCellWrapper')]/following::*[contains" +
+            "(@class, 'kebabWrapper')]", nameVariable));
   }
 
   @Step("Закрываем окно создания новой переменой")
@@ -110,7 +109,6 @@ public class VariablesPage {
 
   @Step("Удаляем переменную с именем {nameVariable}")
   public void deleteVariable(String nameVariable) {
-//    Selenide.executeJavaScript("arguments[0].click();", nameVariable);
     settingsInFieldVariable(nameVariable).click();
     btnDelete.click();
     btnDeleteInAlert.click();
@@ -152,14 +150,6 @@ public class VariablesPage {
   @Step("Закрываем окно инструкции")
   public void closeWelcomeWindow() {
     if ( modal.isDisplayed() ) btnClose.click();
-  }
-
-  @Step("Удаляем все созданные переменные")
-  public void deleteAllVariables() {
-    getListIdVariables();
-    for (String name : listIdVariables){
-      deleteListIdVariables(name);
-    }
   }
 
   public String msgErrorAtName() {

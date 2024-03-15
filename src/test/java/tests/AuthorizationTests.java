@@ -32,7 +32,7 @@ public class AuthorizationTests {
 
   @Test
   public void testAuthWithValidDataWithAlternateDataEntry() {
-    authPage.closeMsgAndAlert();
+    AuthPage.closeMsgAndAlert();
     authPage.authorizationWithAlternateDataEntry(EMAIL, PASSWORD);
     webdriver().shouldHave(url(baseUrl + "/scenarios"));
     authPage.logoutAuthorization();
@@ -40,7 +40,7 @@ public class AuthorizationTests {
 
   @Test
   public void testAuthWithValidDataWithFullDataEntry() {
-    authPage.closeMsgAndAlert();
+    AuthPage.closeMsgAndAlert();
     authPage.authorizationWithFullDataEntry(EMAIL, PASSWORD);
     webdriver().shouldHave(url(baseUrl + "/scenarios"));
     authPage.logoutAuthorization();
@@ -48,13 +48,13 @@ public class AuthorizationTests {
 
   @Test
   public void testAuthWithEmptyFieldEmail() {
-    authPage.closeMsgAndAlert();
+    AuthPage.closeMsgAndAlert();
     authPage.btnNext.should(disabled);
   }
 
   @Test
   public void testAuthWithEmptyFieldPassword() {
-    authPage.closeMsgAndAlert();
+    AuthPage.closeMsgAndAlert();
     authPage.enterEmail(EMAIL);
     authPage.btnNext.click();
     authPage.btnLogin.click();
@@ -64,14 +64,14 @@ public class AuthorizationTests {
 
   @Test
   public void testAuthWithEmptyFieldEmailAndPassword() {
-    authPage.closeMsgAndAlert();
+    AuthPage.closeMsgAndAlert();
     authPage.btnSignIn.click();
     authPage.btnLogin.shouldBe(disabled);
   }
 
   @Test
   public void testAuthWithNonExistingEmailWithAlternateDataEntry() {
-    authPage.closeMsgAndAlert();
+    AuthPage.closeMsgAndAlert();
     authPage.enterEmail(NONEXISTENTEMAIL);
     authPage.btnNext.click();
     authPage.msgVerifyYourEmail.shouldHave(text(VERIFYYOUREMAIL), Duration.ofSeconds(6000));
@@ -79,7 +79,7 @@ public class AuthorizationTests {
 
   @Test
   public void testAuthWithNonExistingEmailWithFullDataEntry() {
-    authPage.closeMsgAndAlert();
+    AuthPage.closeMsgAndAlert();
     authPage.btnSignIn.click();
     authPage.enterEmail(NONEXISTENTEMAIL);
     authPage.enterPassword(PASSWORD);

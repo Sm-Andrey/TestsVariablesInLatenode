@@ -12,8 +12,8 @@ public class AuthPage {
   private final SelenideElement inputPassword = $("[data-test-id='authPasswordInput']");
   public final SelenideElement btnLogin = $("[data-test-id='authButton']");
   public final SelenideElement btnNext = $("[data-test-id='authEmailButton']");
-  private final SelenideElement btnAcceptAlert = $("[data-tid='banner-accept']");
-  private final SelenideElement btnCloseMsg = $x("//button[@aria-label=\"Закрыть сообщение\"]");
+  private static final SelenideElement btnAcceptAlert = $("[data-tid='banner-accept']");
+  private static final SelenideElement btnCloseMsg = $x("//button[@aria-label=\"Закрыть сообщение\"]");
   public final SelenideElement btnSignIn = $("[type='button']");
   public final SelenideElement msgVerifyYourEmail = $x("//div[contains(@class, 'title')]");
   public final SelenideElement errorAlertField = $x("//*[@role=\"alert\"]");
@@ -22,7 +22,7 @@ public class AuthPage {
   public final SelenideElement logout = $x("//li[contains(@data-menu-id, 'logout')]//div[contains(@class, 'link')]");
 
 
-  public void closeMsgAndAlert() {
+  public static void closeMsgAndAlert() {
     if ( btnCloseMsg.isDisplayed() ) btnCloseMsg.click();
     if ( btnAcceptAlert.isDisplayed() ) btnAcceptAlert.click();
   }

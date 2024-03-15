@@ -6,11 +6,12 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.BeforeAll;
 import org.openqa.selenium.Cookie;
-import pagewidgets.APIMethod;
+import API.APIMethod;
+import pagewidgets.AuthPage;
 
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.refresh;
-import static pagewidgets.APIMethod.token;
+import static API.APIMethod.getToken;
 
 public class TestBase {
 
@@ -19,10 +20,10 @@ public class TestBase {
     Configuration.pageLoadTimeout = 60000;
     Configuration.baseUrl = "https://app.latenode.com";
     SelenideLogger.addListener("allure", new AllureSelenide());
-    new APIMethod().postAuth();
+    APIMethod.postAuth();
     open("/auth");
-    WebDriverRunner.getWebDriver().manage().addCookie(new Cookie("AUTH_TOKEN", token));
+    WebDriverRunner.getWebDriver().manage().addCookie(new Cookie("AUTH_TOKEN", getToken()));
+    AuthPage.closeMsgAndAlert();
     refresh();
   }
-
 }
