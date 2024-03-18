@@ -17,7 +17,7 @@ import static com.codeborne.selenide.Selenide.open;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Feature("Тестирование вкладки Variables")
-public class VariablesTest extends TestBase {
+public class VariablesTest extends BasicTestSettings {
   VariablesPage variablePage = new VariablesPage();
 
   @DisplayName("Позитивная проверка создания переменной.")

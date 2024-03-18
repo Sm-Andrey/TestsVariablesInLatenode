@@ -14,7 +14,7 @@ import static com.codeborne.selenide.FileDownloadMode.FOLDER;
 import static com.codeborne.selenide.Selenide.open;
 
 @Feature("Тестирование вкладки Scenarios")
-public class ScenariosTests extends TestBase {
+public class ScenariosTests extends BasicTestSettings {
   ScenarioPage scenarioPage = new ScenarioPage();
 
   @Test
