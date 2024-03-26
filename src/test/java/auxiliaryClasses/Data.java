@@ -15,7 +15,6 @@ public class Data {
   public static final String NAMEALREADYEXISTS = "The variable name already exists";
   public static final String VERIFYYOUREMAIL = "Verify your email";
   public static final String msgErrorNonExistentEmail = "Sorry, an error has occurred. Please try again later or contact tech. support.";
-  public static final String URLAUTH = "https://api.latenode.com/users/v1/user/emailAuth";
 
   public static Stream<Arguments> positiveTestData() {
     return Stream.of(
@@ -40,5 +39,4 @@ public class Data {
             arguments("Bool", " ", " ", "The variable name cannot contain spaces"),
             arguments("JSON", " ", " ", "The variable name cannot contain spaces"));
   }
-
 }

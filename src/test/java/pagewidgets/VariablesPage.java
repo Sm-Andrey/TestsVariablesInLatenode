@@ -5,19 +5,19 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 
-import static com.codeborne.selenide.Condition.enabled;
+import static auxiliaryClasses.Data.NAMEALREADYEXISTS;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.*;
 import static java.lang.String.format;
 
-public class VariablesPage {
-  public final ElementsCollection listVariable = $$x("//div[contains(@class, 'tableBody')]/div");
+public class VariablesPage extends BasePage {
+  public final ElementsCollection listVariables = $$x("//span[contains(@class, 'variableName')]");
+  public final ElementsCollection listCreateDateVariables = $$x("//div[contains(@class, 'dateWrapper')]");
   public final SelenideElement btnSave = $x("//span[text()='Save']/parent::button");
   public final SelenideElement msgAboutContainSpaces = $x("//div[@role='alert']/li");
   public final SelenideElement msgErrorRequiredField = $x("//span[text()='Required field']");
-  public final SelenideElement msgAboutNameAlreadyExists = $("[data-error-string='the-variable-name-already-exists']");
-  private final SelenideElement btnClose = $("[data-uf-button='close']");
-  private final SelenideElement modal = $x("//div[contains(@class, 'uf-visible')]");
+  public final SelenideElement msgAboutNameAlreadyExists = $x("//div[@data-error-string='the-variable-name-already-exists']/span[2]");
   private final SelenideElement btnNewVariable = $x("//div[text()='New variable']/parent::button");
   private final SelenideElement search = $x("//div[contains(@class, 'searchAndFilterWrapper')]//input");
   private final SelenideElement selectTypeOfVariable = $("#type");
@@ -29,8 +29,25 @@ public class VariablesPage {
   private final SelenideElement inputValueInt = $(".ant-input-number-input");
   private final SelenideElement closeWindowNewVariable = $(".ant-drawer-close");
 
+  public void clickRadioButtonSort(String name) {
+    $x(format("//div[contains(@class, 'columnTitle') and  text()='%s']/preceding-sibling::*[contains(@class, 'arrow')]", name)).click();
+  }
 
-  public SelenideElement  typeVariable(String nameType) {
+  public void clickSettingsVieWCreateDateOrNameOnVariables(String name) {
+    $x(format("//div[contains(@class, 'columnTitle') and  text()='%s']/following-sibling::*[contains(@class, 'gear')]", name)).click();
+  }
+
+  public void clickRadioButtonViewCreatedDate(String name) {
+    String newName = "";
+    if (name.equalsIgnoreCase("Created date")) {
+      newName = "createdDate";
+    } else if (name.equalsIgnoreCase("Last Modified")) {
+      newName = "lastModified";
+    }
+    $x(format("//input[@value='%s']", newName)).click();
+  }
+
+  public SelenideElement typeVariable(String nameType) {
     return $(byXpath(format("//div[@title='%s']", nameType)));
   }
 
@@ -63,7 +80,8 @@ public class VariablesPage {
 
   @Step("Закрываем окно создания новой переменой")
   public void closeWindowCreateNewVariable() {
-    closeWindowNewVariable.click();
+    closeWindowNewVariable.shouldBe(visible).click();
+    closeWindowNewVariable.shouldNotBe(visible);
   }
 
   @Step("Открываем окно создания новой переменной и вводим имя переменной")
@@ -91,13 +109,13 @@ public class VariablesPage {
     selectType(type);
     inputKey.clear();
     inputKey.should(enabled).setValue(name);
-    if ( type.equalsIgnoreCase("bool") ) {
+    if (type.equalsIgnoreCase("bool")) {
       inputValue.click();
       selectTrueOrFalse(value).click();
-    } else if ( type.equalsIgnoreCase("int") ) {
+    } else if (type.equalsIgnoreCase("int")) {
       inputValueInt.clear();
       inputValueInt.setValue(value);
-    } else if ( type.equalsIgnoreCase("json") ) {
+    } else if (type.equalsIgnoreCase("json")) {
       inputValue.clear();
       inputValue.setValue(value);
     } else {
@@ -109,9 +127,10 @@ public class VariablesPage {
 
   @Step("Удаляем переменную с именем {nameVariable}")
   public void deleteVariable(String nameVariable) {
-    settingsInFieldVariable(nameVariable).click();
-    btnDelete.click();
-    btnDeleteInAlert.click();
+    settingsInFieldVariable(nameVariable).shouldBe(visible).click();
+    btnDelete.shouldBe(visible).click();
+    btnDeleteInAlert.shouldBe(visible).click();
+    settingsInFieldVariable(nameVariable).shouldNotBe(visible);
   }
 
   @Step("Редактируем переменную с именем {nameVariable} на значения: тип {type}, имя {name} и значение {value}")
@@ -121,13 +140,13 @@ public class VariablesPage {
     changeType(oldType, type);
     inputKey.setValue(Keys.CONTROL + "A").sendKeys(Keys.BACK_SPACE);
     inputKey.setValue(newName);
-    if ( type.equalsIgnoreCase("bool") ) {
+    if (type.equalsIgnoreCase("bool")) {
       inputValue.click();
       selectTrueOrFalse(value).click();
-    } else if ( type.equalsIgnoreCase("int") ) {
+    } else if (type.equalsIgnoreCase("int")) {
       inputValueInt.clear();
       inputValueInt.setValue(value);
-    } else if ( type.equalsIgnoreCase("json") ) {
+    } else if (type.equalsIgnoreCase("json")) {
       inputValue.clear();
       inputValue.setValue(value);
     } else {
@@ -147,11 +166,6 @@ public class VariablesPage {
     search.setValue(Keys.CONTROL + "A").sendKeys(Keys.BACK_SPACE);
   }
 
-  @Step("Закрываем окно инструкции")
-  public void closeWelcomeWindow() {
-    if ( modal.isDisplayed() ) btnClose.click();
-  }
-
   public String msgErrorAtName() {
     return inputKey.getAttribute("validationMessage");
   }
@@ -160,5 +174,10 @@ public class VariablesPage {
     return inputValue.getAttribute("validationMessage");
   }
 
+  @Step("Проверяем сообщение об ошибке \"The variable name already exists\"")
+  public void shouldMsgErrorAlreadyExists() {
+    msgAboutNameAlreadyExists.shouldBe(enabled);
+    msgAboutNameAlreadyExists.shouldHave(text(NAMEALREADYEXISTS));
+  }
 
 }
