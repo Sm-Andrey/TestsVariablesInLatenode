@@ -8,15 +8,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import pagewidgets.AuthPage;
-
-import java.time.Duration;
 
 import static auxiliaryClasses.Data.*;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Configuration.baseUrl;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
+import static java.time.Duration.ofSeconds;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static pagewidgets.BasePage.mockConfirm;
 
@@ -89,7 +92,7 @@ public class AuthorizationTests {
     authPage.enterEmail(NONEXISTENTEMAIL);
     authPage.btnNext.click();
     authPage.msgVerifyYourEmail.shouldBe(visible);
-    authPage.msgVerifyYourEmail.shouldHave(text(VERIFYYOUREMAIL), Duration.ofSeconds(6000));
+    authPage.msgVerifyYourEmail.shouldHave(text(VERIFYYOUREMAIL), ofSeconds(6000));
   }
 
   @DisplayName("Проверка авторизации с помощью несуществующего email с полным вводом данных.")
@@ -124,5 +127,30 @@ public class AuthorizationTests {
     webdriver().shouldHave(url("https://latenode.com/docs/tos"));
     switchTo().window(0);
     switchTo().window(1).close();
+  }
+
+  @DisplayName("Проверка валидных email, согласно RFC.")
+  @ParameterizedTest
+  @MethodSource("auxiliaryClasses.Data#ValidEmailsForAuthTest")
+  @Story("Проверка валидных email, согласно RFC.")
+  public void testValidEmails(String email) {
+    authPage.enterEmailAndMoveCursorToPasswordField(email);
+    authPage.errorAlertField.shouldNotBe(visible, ofSeconds(1));
+    sleep(2000);
+  }
+
+  @DisplayName("Проверка невалидных email, согласно RFC.")
+  @ParameterizedTest
+  @MethodSource("auxiliaryClasses.Data#InvalidEmailsForAuthTest")
+  @Story("Проверка невалидных email, согласно RFC.")
+  public void testInvalidEmails(String email, String msg) {
+    authPage.enterEmailAndMoveCursorToPasswordField(email);
+    if (authPage.errorAlertField.is(exist)) {
+      assertEquals(REQUIREDFIELD, authPage.errorAlertField.shouldBe(visible, ofSeconds(2)).getText(), msg);
+      sleep(2000);
+    } else {
+      sleep(2500);
+      assertTrue(authPage.errorAlertField.isDisplayed(), msg);
+    }
   }
 }

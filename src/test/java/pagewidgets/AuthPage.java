@@ -15,7 +15,7 @@ public class AuthPage extends BasePage {
   public final SelenideElement btnNext = $("[data-test-id='authEmailButton']");
   public final SelenideElement btnSignIn = $("[type='button']");
   public final SelenideElement msgVerifyYourEmail = $x("//div[contains(@class, 'title')]");
-  public final SelenideElement errorAlertField = $x("//*[@role=\"alert\"]");
+  public final SelenideElement errorAlertField = $x("//*[@role=\"alert\"]/li");
   public final SelenideElement errorMsgNonExistentEmail = $(".ant-alert-message");
   public final SelenideElement profile = $x("//li[@data-menu-left=\"profile\"]");
   public final SelenideElement logout = $x("//li[contains(@data-menu-id, 'logout')]//div[contains(@class, 'link')]");
@@ -35,6 +35,13 @@ public class AuthPage extends BasePage {
   @Step("Вводим {email}")
   public void enterEmail(String email) {
     inputEmail.shouldBe(visible).setValue(email);
+  }
+
+  @Step("Вводим {email} после клика на 'Sign in' и переводим курсор в поле пароль")
+  public void enterEmailAndMoveCursorToPasswordField(String email) {
+    btnSignIn.shouldBe(visible).click();
+    inputEmail.setValue(email);
+    inputPassword.click();
   }
 
   @Step("Вводим {password}")
