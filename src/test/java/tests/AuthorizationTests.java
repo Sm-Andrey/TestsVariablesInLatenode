@@ -12,6 +12,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import pagewidgets.AuthPage;
 
+import java.util.function.BooleanSupplier;
+
 import static auxiliaryClasses.Data.*;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Configuration.baseUrl;
@@ -133,10 +135,10 @@ public class AuthorizationTests {
   @ParameterizedTest
   @MethodSource("auxiliaryClasses.Data#ValidEmailsForAuthTest")
   @Story("Проверка валидных email, согласно RFC.")
-  public void testValidEmails(String email) {
+  public void testValidEmails(String email, String msg) {
     authPage.enterEmailAndMoveCursorToPasswordField(email);
-    authPage.errorAlertField.shouldNotBe(visible, ofSeconds(1));
-    sleep(2000);
+    assertTrue(authPage.errorAlertField.is(hidden), msg);
+    sleep(2200);
   }
 
   @DisplayName("Проверка невалидных email, согласно RFC.")
