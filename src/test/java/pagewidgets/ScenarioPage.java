@@ -7,9 +7,9 @@ import org.openqa.selenium.Keys;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -128,7 +128,7 @@ public class ScenarioPage extends BasePage {
     locatorParametersScenario(nameScenario).click();
     locatorBtnDelete.shouldBe(visible).click();
     locatorBtnConfirmDelete.shouldBe(visible).click();
-    locatorBtnConfirmDelete.shouldNotBe(visible);
+    locatorBtnConfirmDelete.shouldNotBe(visible, Duration.ofSeconds(30));
   }
 
   @Step("Запускаем активность ноды.")
@@ -154,7 +154,7 @@ public class ScenarioPage extends BasePage {
   public void createFolder(String nameFolder) {
     locatorSearch.click();
     locatorBtnAddNewFolder.shouldBe(visible).click();
-    locatorInputNewFolder.setValue(Keys.CONTROL + "A").sendKeys(Keys.BACK_SPACE);
+    locatorInputNewFolder.shouldBe(visible).setValue(Keys.CONTROL + "A").sendKeys(Keys.BACK_SPACE);
     locatorInputNewFolder.setValue(nameFolder);
     locatorBtnSave.click();
     locatorTitleFolder(nameFolder).shouldBe(visible);
@@ -177,8 +177,8 @@ public class ScenarioPage extends BasePage {
 
   @Step("Перемещаем выбранный сценарий в папку.")
   public void moveToScenarioInFolder(String nameScenario, String nameOneFolder) {
-    locatorSearch.click();
-    locatorParametersScenario(nameScenario).shouldBe(visible).click();
+    locatorSearch.shouldBe(visible).click();
+    locatorParametersScenario(nameScenario).shouldBe(enabled).click();
     locatorBtnMoveToScenario.click();
     locatorSelectFolderInMoveTo("All scenarios").click();
     locatorSelectMoreFolder.click();
@@ -208,8 +208,8 @@ public class ScenarioPage extends BasePage {
 
   @Step("Экпорт сценария.")
   public File exportScenario(String nameScenario) throws FileNotFoundException {
-    locatorParametersScenario(nameScenario).click();
-    return locatorBtnExportScenarioOrFolder.shouldBe(visible).download();
+    locatorParametersScenario(nameScenario).shouldBe(visible).click();
+    return locatorBtnExportScenarioOrFolder.download(12000);
   }
 
   @Step("Экпорт папки.")

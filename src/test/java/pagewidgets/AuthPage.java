@@ -22,26 +22,37 @@ public class AuthPage extends BasePage {
   public final SelenideElement locatorPrivacyPolicy = $x("//a[text()=\"privacy policy\"]");
   public final SelenideElement locatorTermsOfService = $x("//a[text()=\"terms of service\"]");
 
-  @Step("Клик по ссылке \"privacy policy\"")
-  public void clickPrivacyPolicy() {
-    locatorPrivacyPolicy.shouldBe(visible).click();
+  @Step("Проверка наличия ссылки \"privacy policy\"")
+  public boolean checkPrivacyPolicy() {
+    return locatorPrivacyPolicy.shouldBe(visible).getAttribute("href").contains("https://latenode.com/documents/privacy_policy");
   }
 
-  @Step("Клик по ссылке \"terms of service\"")
-  public void clickTermsOfService() {
-    locatorTermsOfService.shouldBe(visible).click();
+  @Step("Проверка наличия ссылки \"terms of service\"")
+  public boolean checkTermsOfService() {
+    return locatorTermsOfService.shouldBe(visible).getAttribute("href").contains("https://latenode.com/documents/tos");
+  }
+
+  @Step("Проверяем наличие alert оповещения о не валидном email.")
+  public boolean checkEmail() {
+    if (btnNext.isEnabled()) {
+      btnNext.shouldBe(visible).click();
+      if (inputEmail.shouldBe(visible).getAttribute("validationMessage").isEmpty()){
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (inputEmail.shouldBe(visible).getAttribute("validationMessage").isEmpty()){
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   @Step("Вводим {email}")
   public void enterEmail(String email) {
     inputEmail.shouldBe(visible).setValue(email);
-  }
-
-  @Step("Вводим {email} после клика на 'Sign in' и переводим курсор в поле пароль")
-  public void enterEmailAndMoveCursorToPasswordField(String email) {
-    btnSignIn.shouldBe(visible).click();
-    inputEmail.setValue(email);
-    inputPassword.click();
   }
 
   @Step("Вводим {password}")

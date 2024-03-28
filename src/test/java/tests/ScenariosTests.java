@@ -55,12 +55,12 @@ public class ScenariosTests extends BasicTestSettings {
   @Test
   @Story("Проверка запуска активности ноды и остановки этой активности.")
   public void testActiveStatusScenario() throws IOException {
-    var idOneScenario = createScenarios("", "");
+    var idOneScenario = createScenarios("ActiveScenario", "");
     refresh();
-    scenarioPage.startActiveNode("Untitled");
-    scenarioPage.shouldStatusScenario("Untitled", "Active");
-    scenarioPage.disableActiveNode("Untitled");
-    scenarioPage.shouldStatusScenario("Untitled", "Pause");
+    scenarioPage.startActiveNode("ActiveScenario");
+    scenarioPage.shouldStatusScenario("ActiveScenario", "Active");
+    scenarioPage.disableActiveNode("ActiveScenario");
+    scenarioPage.shouldStatusScenario("ActiveScenario", "Pause");
     deleteScenarios(idOneScenario);
   }
 
@@ -68,16 +68,16 @@ public class ScenariosTests extends BasicTestSettings {
   @Test
   @Story("Проверка удаления созданого сценария.")
   public void testDeleteScenario() throws IOException {
-    createScenarios("", "");
+    createScenarios("ScenarioForDelete", "");
     refresh();
-    scenarioPage.deleteScenario("Untitled");
+    scenarioPage.deleteScenario("ScenarioForDelete");
   }
 
   @DisplayName("Проверка создания папки и удаление папки.")
   @Test
   @Story("Проверка создания папки и удаление папки.")
   public void testCreateAndDeleteFolder() throws IOException {
-    var idOneScenario = createScenarios("", "");
+    var idOneScenario = createScenarios("ScenarioForTestDeleteFolder", "");
     refresh();
     scenarioPage.createFolder("Test_folder");
     scenarioPage.deleteFolder("Test_folder");
@@ -88,14 +88,14 @@ public class ScenariosTests extends BasicTestSettings {
   @Test
   @Story("Проверка перемещения сценария между создаными папками.")
   public void testMoveToScenarioBetweenFolder() throws IOException {
-    createScenarios("", "");
+    createScenarios("ScenarioForMoveTo", "");
     var idOneFolder = createFolderScenarios("One_folder", "");
     var idTwoFolder = createFolderScenarios("Two_folder", "");
     refresh();
-    scenarioPage.moveToScenarioInFolder("Untitled", "One_folder");
-    scenarioPage.shouldVisibleScenario("One_folder", "Untitled");
-    scenarioPage.moveToScenarioBetweenFolder("Untitled", "One_folder", "Two_folder");
-    scenarioPage.shouldVisibleScenario("Two_folder", "Untitled");
+    scenarioPage.moveToScenarioInFolder("ScenarioForMoveTo", "One_folder");
+    scenarioPage.shouldVisibleScenario("One_folder", "ScenarioForMoveTo");
+    scenarioPage.moveToScenarioBetweenFolder("ScenarioForMoveTo", "One_folder", "Two_folder");
+    scenarioPage.shouldVisibleScenario("Two_folder", "ScenarioForMoveTo");
     deleteFolderScenarios(idOneFolder);
     deleteFolderScenarios(idTwoFolder);
   }
@@ -118,9 +118,9 @@ public class ScenariosTests extends BasicTestSettings {
   @Story("Проверка экпорта сценария.")
   public void exportScenario() throws IOException {
     Configuration.fileDownload = FOLDER;
-    var idOneScenario = createScenarios("", "");
+    var idOneScenario = createScenarios("ScenarioForExport", "");
     refresh();
-    File downloadedFile = scenarioPage.exportScenario("Untitled");
+    File downloadedFile = scenarioPage.exportScenario("ScenarioForExport");
     scenarioPage.checkingDownloadFile(downloadedFile, ".+.json");
     deleteScenarios(idOneScenario);
   }
@@ -130,10 +130,10 @@ public class ScenariosTests extends BasicTestSettings {
   @Story("Проверка экпорта папки.")
   public void exportFolder() throws IOException {
     Configuration.fileDownload = FOLDER;
-    createScenarios("", "");
+    createScenarios("ScenarioForExportFolder", "");
     var idOneFolder = createFolderScenarios("FolderWithMoveToScenario", "");
     refresh();
-    scenarioPage.moveToScenarioInFolder("Untitled", "FolderWithMoveToScenario");
+    scenarioPage.moveToScenarioInFolder("ScenarioForExportFolder", "FolderWithMoveToScenario");
     File downloadedFile = scenarioPage.exportFolder("FolderWithMoveToScenario");
     scenarioPage.checkingDownloadFile(downloadedFile, ".+.zip");
     deleteFolderScenarios(idOneFolder);
@@ -143,7 +143,7 @@ public class ScenariosTests extends BasicTestSettings {
   @Test
   @Story("Проверка импорта сценария.")
   public void testImportScenario() throws IOException {
-    var idOneScenario = createScenarios("", "");
+    var idOneScenario = createScenarios("ScenarioForImport", "");
     var idOneFolder = createFolderScenarios("FolderForImportScenario", "");
     refresh();
     scenarioPage.importFile("FolderForImportScenario", "scenarioUpload.json");
@@ -156,7 +156,7 @@ public class ScenariosTests extends BasicTestSettings {
   @Test
   @Story("Проверка импорта папки.")
   public void testImportFolder() throws IOException {
-    var idOneScenario = createScenarios("", "");
+    var idOneScenario = createScenarios("ScenarioForImportFolder", "");
     var idOneFolder = createFolderScenarios("FolderForImportFolder", "");
     refresh();
     scenarioPage.importFile("FolderForImportFolder", "folderUpload.zip");
@@ -170,7 +170,7 @@ public class ScenariosTests extends BasicTestSettings {
   @Story("Проверка сортировки папки сценария по name.")
   public void testSortingFolderScenariosToName() throws IOException {
     open("/scenarios");
-    var idOneScenario = createScenarios("", "");
+    var idOneScenario = createScenarios("ScenarioForSortScenarios", "");
     var idOneFolder = createFolderScenarios("OneSortFolder", "");
     var idTwoFolder = createFolderScenarios("TwoSortFolder", "");
     refresh();
@@ -187,16 +187,16 @@ public class ScenariosTests extends BasicTestSettings {
   @Story("Проверка сортировки сценария по name.")
   public void testSortingScenariosToName() throws IOException {
     open("/scenarios");
-    var idOneScenario = createScenarios("", "");
-    var oneEditScenario = editScenarios(idOneScenario, "aElementEditScenario", "");
-    var idTwoScenario = createScenarios("", "");
-    var twoEditScenario = editScenarios(idTwoScenario, "zElementEditScenario", "");
+    var idOneScenario = createScenarios("aElementEditScenario", "");
+//    var oneEditScenario = editScenarios(idOneScenario, "aElementEditScenario", "");
+    var idTwoScenario = createScenarios("zElementEditScenario", "");
+//    var twoEditScenario = editScenarios(idTwoScenario, "zElementEditScenario", "");
     refresh();
     assertThat(compareName(scenarioPage.locatorListScenarios, "down")).isTrue();
     scenarioPage.clickRadioButtonSort("Name");
     assertThat(compareName(scenarioPage.locatorListScenarios, "up")).isTrue();
-    deleteScenarios(oneEditScenario);
-    deleteScenarios(twoEditScenario);
+    deleteScenarios(idOneScenario);
+    deleteScenarios(idTwoScenario);
   }
 
   @Disabled

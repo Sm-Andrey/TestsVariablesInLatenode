@@ -80,7 +80,7 @@ public class VariablesPage extends BasePage {
 
   @Step("Закрываем окно создания новой переменой")
   public void closeWindowCreateNewVariable() {
-    closeWindowNewVariable.shouldBe(visible).click();
+    closeWindowNewVariable.shouldBe(enabled).click();
     closeWindowNewVariable.shouldNotBe(visible);
   }
 
@@ -105,7 +105,7 @@ public class VariablesPage extends BasePage {
 
   @Step("Создаем переменную с типом {type} именем {name} и значением {value}")
   public void createVariable(String type, String name, String value) {
-    btnNewVariable.click();
+    btnNewVariable.shouldBe(visible).click();
     selectType(type);
     inputKey.clear();
     inputKey.should(enabled).setValue(name);
@@ -178,6 +178,7 @@ public class VariablesPage extends BasePage {
   public void shouldMsgErrorAlreadyExists() {
     msgAboutNameAlreadyExists.shouldBe(enabled);
     msgAboutNameAlreadyExists.shouldHave(text(NAMEALREADYEXISTS));
+    msgAboutNameAlreadyExists.shouldNotBe(visible);
   }
 
 }

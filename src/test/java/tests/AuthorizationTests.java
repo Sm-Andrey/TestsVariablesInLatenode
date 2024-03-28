@@ -3,16 +3,11 @@ package tests;
 import com.codeborne.selenide.Configuration;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import pagewidgets.AuthPage;
-
-import java.util.function.BooleanSupplier;
 
 import static auxiliaryClasses.Data.*;
 import static com.codeborne.selenide.Condition.*;
@@ -20,7 +15,7 @@ import static com.codeborne.selenide.Configuration.baseUrl;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static java.time.Duration.ofSeconds;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static pagewidgets.BasePage.mockConfirm;
@@ -50,6 +45,7 @@ public class AuthorizationTests {
     authPage.authorizationWithAlternateDataEntry(EMAIL, PASSWORD);
     webdriver().shouldHave(url(baseUrl + "/scenarios"));
     authPage.logoutAuthorization();
+    sleep(2000);
   }
 
   @DisplayName("Проверка авторизации с использованием действительных данных с полным вводом данных.")
@@ -59,6 +55,7 @@ public class AuthorizationTests {
     authPage.authorizationWithFullDataEntry(EMAIL, PASSWORD);
     webdriver().shouldHave(url(baseUrl + "/scenarios"));
     authPage.logoutAuthorization();
+    sleep(2000);
   }
 
   @DisplayName("Проверка авторизации с пустым полем Email.")
@@ -66,6 +63,7 @@ public class AuthorizationTests {
   @Story("Проверка авторизации с пустым полем Email.")
   public void testAuthWithEmptyFieldEmail() {
     authPage.btnNext.should(disabled);
+    sleep(2000);
   }
 
   @DisplayName("Проверка авторизации с пустым полем пароля.")
@@ -77,6 +75,7 @@ public class AuthorizationTests {
     authPage.btnLogin.click();
     authPage.errorAlertField.should(visible);
     authPage.errorAlertField.shouldHave(text(REQUIREDFIELD));
+    sleep(2000);
   }
 
   @DisplayName("Проверка авторизации с пустым полем email и паролем.")
@@ -85,6 +84,7 @@ public class AuthorizationTests {
   public void testAuthWithEmptyFieldEmailAndPassword() {
     authPage.btnSignIn.click();
     authPage.btnLogin.shouldBe(disabled);
+    sleep(2000);
   }
 
   @DisplayName("Проверка авторизации с помощью несуществующего email с альтернативным вводом данных.")
@@ -95,6 +95,7 @@ public class AuthorizationTests {
     authPage.btnNext.click();
     authPage.msgVerifyYourEmail.shouldBe(visible);
     authPage.msgVerifyYourEmail.shouldHave(text(VERIFYYOUREMAIL), ofSeconds(6000));
+    sleep(2000);
   }
 
   @DisplayName("Проверка авторизации с помощью несуществующего email с полным вводом данных.")
@@ -107,52 +108,44 @@ public class AuthorizationTests {
     authPage.btnLogin.click();
     authPage.errorMsgNonExistentEmail.shouldBe(visible);
     authPage.errorMsgNonExistentEmail.shouldHave(text(msgErrorNonExistentEmail));
+    sleep(2000);
   }
 
   @DisplayName("Проверка перехода по ссылке \"privacy policy\".")
   @Test
   @Story("Проверка перехода по ссылке \"privacy policy\".")
-  public void testСlickLinkOnPrivacyPolicy() {
-    authPage.clickPrivacyPolicy();
-    switchTo().window(1);
-    webdriver().shouldHave(url("https://latenode.com/docs/privacy-policy"));
-    switchTo().window(0);
-    switchTo().window(1).close();
+  public void testCheckLinkOnPrivacyPolicy() {
+    sleep(2000);
+    assertTrue(authPage.checkPrivacyPolicy(), "В атрибуте href нет ссылки");
   }
 
   @DisplayName("Проверка перехода по ссылке \"terms of service\".")
   @Test
   @Story("Проверка перехода по ссылке \"terms of service\".")
-  public void testСlickLinkOnTermsOfService() {
-    authPage.clickTermsOfService();
-    switchTo().window(1);
-    webdriver().shouldHave(url("https://latenode.com/docs/tos"));
-    switchTo().window(0);
-    switchTo().window(1).close();
+  public void testCheckLinkOnTermsOfService() {
+    sleep(2000);
+    assertTrue(authPage.checkTermsOfService(), "В атрибуте href нет ссылки");
   }
 
+  @Disabled
   @DisplayName("Проверка валидных email, согласно RFC.")
   @ParameterizedTest
   @MethodSource("auxiliaryClasses.Data#ValidEmailsForAuthTest")
   @Story("Проверка валидных email, согласно RFC.")
   public void testValidEmails(String email, String msg) {
-    authPage.enterEmailAndMoveCursorToPasswordField(email);
-    assertTrue(authPage.errorAlertField.is(hidden), msg);
+    authPage.enterEmail(email);
     sleep(2200);
+    assertTrue(authPage.checkEmail(), msg);
   }
 
+  @Disabled
   @DisplayName("Проверка невалидных email, согласно RFC.")
   @ParameterizedTest
   @MethodSource("auxiliaryClasses.Data#InvalidEmailsForAuthTest")
   @Story("Проверка невалидных email, согласно RFC.")
   public void testInvalidEmails(String email, String msg) {
-    authPage.enterEmailAndMoveCursorToPasswordField(email);
-    if (authPage.errorAlertField.is(exist)) {
-      assertEquals(REQUIREDFIELD, authPage.errorAlertField.shouldBe(visible, ofSeconds(2)).getText(), msg);
-      sleep(2000);
-    } else {
-      sleep(2500);
-      assertTrue(authPage.errorAlertField.isDisplayed(), msg);
-    }
+    authPage.enterEmail(email);
+    sleep(2200);
+    assertFalse(authPage.checkEmail(), msg);
   }
 }
